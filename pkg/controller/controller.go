@@ -471,6 +471,7 @@ func (p *csiProvisioner) Provision(options controller.VolumeOptions) (*v1.Persis
 	}
 
 	req.Parameters, err = removePrefixedParameters(createVolumeRequestParameters)
+	req.Parameters = injectCOParameter(createVolumeRequestParameters, options.PVC)
 	if err != nil {
 		return nil, fmt.Errorf("failed to strip CSI Parameters of prefixed keys: %v", err)
 	}
@@ -886,4 +887,18 @@ func deprecationWarning(deprecatedParam, newParam, removalVersion string) string
 		newParamPhrase = fmt.Sprintf(", please use \"%s\" instead", newParam)
 	}
 	return fmt.Sprintf("\"%s\" is deprecated and will be removed in %s%s", deprecatedParam, removalVersion, newParamPhrase)
+}
+
+// inject parameters which depends on container orchestration
+func injectCOParameter(clsParameters map[string]string, pvc *v1.PersistentVolumeClaim) map[string]string {
+	annotations := pvc.Annotations
+
+	parameters := make(map[string]string)
+	for v, k := range annotations {
+		parameters[k] = v
+	}
+	for v, k := range clsParameters {
+		parameters[k] = v
+	}
+	return parameters
 }
