@@ -32,7 +32,7 @@ import (
 	"sigs.k8s.io/sig-storage-lib-external-provisioner/controller"
 	"sigs.k8s.io/sig-storage-lib-external-provisioner/util"
 
-	v1 "k8s.io/api/core/v1"
+	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	_ "k8s.io/apimachinery/pkg/util/json"
@@ -894,10 +894,10 @@ func injectCOParameter(clsParameters map[string]string, pvc *v1.PersistentVolume
 	annotations := pvc.Annotations
 
 	parameters := make(map[string]string)
-	for v, k := range annotations {
+	for k, v := range annotations {
 		parameters[k] = v
 	}
-	for v, k := range clsParameters {
+	for k, v := range clsParameters {
 		parameters[k] = v
 	}
 	return parameters
